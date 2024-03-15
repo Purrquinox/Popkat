@@ -1,0 +1,36 @@
+{
+	"name": "popkat",
+	"version": "0.0.1",
+	"description": "Amazon S3 Upload Widget for Purrquinox",
+	"main": "index.js",
+	"scripts": {
+		"start": "bun run ./dist/index",
+		"tsc": "tsc",
+		"format": "prettier --write ."
+	},
+	"dependencies": {
+		"@prisma/client": "^5.11.0",
+		"bun": "^1.0.31",
+		"colors": "^1.4.0",
+		"dotenv": "^16.0.3",
+		"prettier": "^2.7.1",
+		"redis": "^4.6.13"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Purrquinox/Popkat.git"
+	},
+	"author": "Purrquinox",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Purrquinox/Popkat/issues"
+	},
+	"homepage": "https://github.com/Purrquinox/Popkat#readme",
+	"devDependencies": {
+		"@types/bun": "latest",
+		"prisma": "^5.11.0"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	}
+}
