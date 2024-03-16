@@ -1,23 +1,37 @@
 // Packages
 import * as redis from "redis";
-import * as dotenv from "dotenv";
-import * as logger from "../logger";
-
-// Dotenv Config
-dotenv.config();
+import "dotenv/config";
 
 // Create a Redis client
-const client = redis.createClient({
+const RedisClient = redis.createClient({
 	url: process.env.REDIS_URI,
 });
 
-client.connect();
+RedisClient.connect();
 
 // Cache Manager
 class CacheManager {
+	/**
+	 * Get a value from the cache
+	 * @param key the key of the value to retrieve
+	 */
+	static async get(key: string): Promise<any> {
+		try {
+			return await RedisClient.get(key);
+		} catch (error) {
+			console.error("Error getting cache:", error);
+			return null;
+		}
+	}
+
+	/**
+	 * Set a value in the cache
+	 * @param key the key of the value to set
+	 * @param value the value to set
+	 */
 	static async set(key: string, value: any): Promise<boolean> {
 		try {
-			await client.set(key, value);
+			await RedisClient.set(key, value);
 			return true;
 		} catch (error) {
 			console.error("Error setting cache:", error);
@@ -25,15 +39,36 @@ class CacheManager {
 		}
 	}
 
-	static async get(key: string): Promise<any> {
+	/**
+	 * Update a value in the cache
+	 * @param key the key of the value to update
+	 * @param value the new value to set
+	 */
+	static async update(key: string, value: any): Promise<boolean> {
 		try {
-			return await client.get(key);
+			await RedisClient.del(key);
+			await RedisClient.set(key, value);
+			return true;
 		} catch (error) {
-			console.error("Error getting cache:", error);
-			return null;
+			console.error("Error updating cache:", error);
+			return false;
+		}
+	}
+
+	/**
+	 * Delete a value from the cache
+	 * @param key the key of the value to delete
+	 */
+	static async delete(key: string): Promise<boolean> {
+		try {
+			await RedisClient.del(key);
+			return true;
+		} catch (error) {
+			console.error("Error deleting cache:", error);
+			return false;
 		}
 	}
 }
 
-// Export Cache Manager
-export default CacheManager;
+// Export Cache Manager and RedisClient
+export { CacheManager, RedisClient };
