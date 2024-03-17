@@ -2,19 +2,16 @@
 import express, { Request, Response, json } from "express";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
-import { CacheManager, RedisClient } from "./cache/index";
+import { RedisClient } from "./cache/index";
 import * as cors from "cors";
 import * as bodyParser from "body-parser";
 import * as compression from "compression";
 import multer from "multer";
 import multerS3 from "multer-s3";
-import * as aws from "aws-sdk";
 import { S3, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from 'stream';
-import { createWriteStream } from "node:fs";
 import * as crypto from "crypto";
 import * as path from "path";
-import * as Database from "./database/index";
 import * as Logger from "./logger";
 import "dotenv/config";
 
@@ -113,8 +110,11 @@ app.get("/:file", async (req, res) => {
     }
 });
 
-app.post("/upload", storage.single("file"), (req, res, next) => {
-	res.send(req.file);
+app.post("/upload", (req, res, next) => {
+    storage.single("file")(req, res, (err: any) => {
+        if (err) return res.status(500).send(err);
+        else return res.json({ key: req.file["key"] });
+    });
 });
 
 // Expose Server
