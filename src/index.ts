@@ -9,7 +9,9 @@ import * as compression from "compression";
 import multer from "multer";
 import multerS3 from "multer-s3";
 import * as aws from "aws-sdk";
-import { S3 } from "@aws-sdk/client-s3";
+import { S3, GetObjectCommand } from "@aws-sdk/client-s3";
+import { Readable } from 'stream';
+import { createWriteStream } from "node:fs";
 import * as crypto from "crypto";
 import * as path from "path";
 import * as Database from "./database/index";
@@ -70,7 +72,7 @@ const storage = multer({
 			const fileName = `${crypto
 				.createHash("md5")
 				.update(file.originalname)
-				.digest("hex")}_${new Date().getUTCMilliseconds()}.${path
+				.digest("hex")}_${new Date().getUTCMilliseconds()}${path
 				.extname(file.originalname)
 				.toLowerCase()}`;
 			cb(null, fileName);
@@ -94,6 +96,23 @@ const storage = multer({
 });
 
 // Routes
+app.get("/:file", async (req, res) => {
+    const file = req.params["file"];
+
+    try {
+        const command = new GetObjectCommand({
+            Bucket: "popkat",
+            Key: file,
+        });
+        const item = await s3.send(command);
+        const readStream = item.Body as Readable;
+        
+        readStream.pipe(res);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 app.post("/upload", storage.single("file"), (req, res, next) => {
 	res.send(req.file);
 });
