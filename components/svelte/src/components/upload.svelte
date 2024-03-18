@@ -1,12 +1,22 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { FileDropzone } from '@skeletonlabs/skeleton';
+	import { ProgressBar } from '@skeletonlabs/skeleton';
+
+	export let AllowedFileTypes: string[]; // Array of allowed file types
+	export let MaxFileSize: number; // in Megabytes
+	export let API_URL: string; // URL of the Upload API
+	export let Logo: string; // Logo URL
+
 	export let Open: Boolean = true;
+	export let Uploading: Boolean = false;
+
+	let files: FileList;
 
 	const dispatch: any = createEventDispatcher();
 
 	const onChangeHandler = (e: Event): void => {
-		console.log('file data:', e);
+		console.log(e);
 	};
 </script>
 
@@ -23,11 +33,7 @@
 				class="flex justify-between items-center head bg-surface-800 text-primary-400 py-5 px-8 text-2xl font-extrabold"
 			>
 				<div class="flex">
-					<img
-						class="h-10 rounded-full"
-						src="https://sparkyflight.xyz/logo.png"
-						alt="Sparkyflight"
-					/>
+					<img class="h-10 rounded-full" src={Logo} alt="Sparkyflight" />
 					<h2 class="ml-2 mt-1">Upload Files</h2>
 				</div>
 
@@ -49,15 +55,21 @@
 				</button>
 			</div>
 
-			<div class="content p-5">
-				<FileDropzone name="files" on:change={onChangeHandler}>
+			<div class="content p-4">
+				<FileDropzone name="files" bind:files on:change={onChangeHandler}>
 					<svelte:fragment slot="lead"
 						><i class="fa-solid fa-file-arrow-up text-4xl" /></svelte:fragment
 					>
 					<svelte:fragment slot="message"><b>Upload a File</b> or drag and drop!</svelte:fragment>
-					<svelte:fragment slot="meta"><b>JPEG | PNG | JPG (50MB MAX)</b></svelte:fragment>
+					<svelte:fragment slot="meta"
+						><b>{AllowedFileTypes.join(' | ')} ({MaxFileSize}MB MAX)</b></svelte:fragment
+					>
 				</FileDropzone>
 			</div>
+
+			{#if Uploading}
+				<ProgressBar value={undefined} meter="bg-primary-600" track="bg-surface-600" />
+			{/if}
 		</div>
 	</div>
 {/if}
