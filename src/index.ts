@@ -9,7 +9,7 @@ import * as compression from "compression";
 import multer from "multer";
 import multerS3 from "multer-s3";
 import { S3, GetObjectCommand } from "@aws-sdk/client-s3";
-import { Readable } from 'stream';
+import { Readable } from "stream";
 import * as crypto from "crypto";
 import * as path from "path";
 import * as Logger from "./logger";
@@ -94,27 +94,27 @@ const storage = multer({
 
 // Routes
 app.get("/:file", async (req, res) => {
-    const file = req.params["file"];
+	const file = req.params["file"];
 
-    try {
-        const command = new GetObjectCommand({
-            Bucket: "popkat",
-            Key: file,
-        });
-        const item = await s3.send(command);
-        const readStream = item.Body as Readable;
-        
-        readStream.pipe(res);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+	try {
+		const command = new GetObjectCommand({
+			Bucket: "popkat",
+			Key: file,
+		});
+		const item = await s3.send(command);
+		const readStream = item.Body as Readable;
+
+		readStream.pipe(res);
+	} catch (error) {
+		res.status(500).send(error);
+	}
 });
 
 app.post("/upload", (req, res, next) => {
-    storage.single("file")(req, res, (err: any) => {
-        if (err) return res.status(500).send(err);
-        else return res.json({ key: req.file["key"] });
-    });
+	storage.single("file")(req, res, (err: any) => {
+		if (err) return res.status(500).send(err);
+		else return res.json({ key: req.file["key"] });
+	});
 });
 
 // Expose Server
