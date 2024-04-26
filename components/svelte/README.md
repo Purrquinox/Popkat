@@ -1,58 +1,20 @@
-# create-svelte
+# Popkat (by Purrquinox, for use with Sveltekit)
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Popkat is a Upload Widget (for Sveltekit), designed to make uploading files to your server using our self-hosted API. Our API is constantly under development to ensure that it is always optimized to it's best; making the User Experience even better for all of our users, no matter their network speeds. This component uses SkeletonCSS with TailwindCSS to help create the innovative design that it has. You can choose it's theme by setting the `data-theme` within your `app.html` file inside of your Sveltekit app. Please note that you **MUST** self host our API for usage of this component. We do **NOT** provide any image hosting for this.
 
-Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
+The available theme options are:
 
-## Creating a project
+- skeleton
+- wintry
+- modern
+- rocket
+- seafoam
+- vintage
+- sahara
+- hamlindigo
+- gold-nouveau
+- crimson
 
-If you're seeing this, you've probably already done this step. Congrats!
+# Popkat (API)
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
-
-## Building
-
-To build your library:
-
-```bash
-npm run package
-```
-
-To create a production version of your showcase app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
-
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
-```
+Popkat is a Upload Widget (for Sveltekit) and API, designed to make uploading files to our server from our websites even easier than before. We utilize the use of SeaweedFS (S3) for this, however pure AWS S3 should work without any changes to the actual code; as long as the Environment Variables within the `.env` file is configured correctly. With the help of the Express Middlewares that we use, the performance of our API and Upload Widget should be extremely quick. We try our best to maintain this, to ensure it's optimized at all times. You **MUST** self host our API for usage of this component. You may find the Github Repository to it @ [@Purrquinox/Popkat](https://github.com/Purrquinox/Popkat).

@@ -173,11 +173,20 @@
 				{/if}
 
 				<div class="flex justify-end">
-					<button
-						class="mt-3 flex items-center justify-center rounded-full border border-transparent bg-surface-800 px-4 py-3 text-base font-medium text-primary-400 hover:bg-surface-700 disabled:opacity-50 hover:disabled:bg-surface-800 disabled:cursor-wait md:py-4 md:px-10 md:text-lg"
-						on:click={uploadFiles}
-						disabled={Uploading}>Upload <i class="ml-2 fa fa-arrow-right" /></button
-					>
+					{#if files && files.every((p) => p.uploaded === true)}
+						<button
+							class="mt-3 flex items-center justify-center rounded-full border border-transparent bg-surface-800 px-4 py-3 text-base font-medium text-primary-400 hover:bg-surface-700 disabled:opacity-50 hover:disabled:bg-surface-800 disabled:cursor-wait md:py-4 md:px-10 md:text-lg"
+							on:click={() => {
+								dispatch('close');
+							}}>Finish <i class="ml-2 fa-solid fa-check" /></button
+						>
+					{:else}
+						<button
+							class="mt-3 flex items-center justify-center rounded-full border border-transparent bg-surface-800 px-4 py-3 text-base font-medium text-primary-400 hover:bg-surface-700 disabled:opacity-50 hover:disabled:bg-surface-800 disabled:cursor-wait md:py-4 md:px-10 md:text-lg"
+							on:click={uploadFiles}
+							disabled={Uploading}>Upload <i class="ml-2 fa fa-arrow-right" /></button
+						>
+					{/if}
 				</div>
 			</div>
 
