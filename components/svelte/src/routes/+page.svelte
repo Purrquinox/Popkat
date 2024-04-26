@@ -5,9 +5,10 @@
 </script>
 
 <Upload
-	AllowedFileTypes={['jpg', 'jpeg', 'png']}
+	AllowedFileTypes={['image/jpg', 'image/jpeg', 'image/png']}
 	MaxFileSize={50}
-	API_URL="http://localhost:5600/upload"
+	MultipleFilesAllowed={true}
+	API_URL="http://localhost:5600"
 	Logo="https://sparkyflight.xyz/logo.png"
 	{Open}
 	on:close={() => (Open = false)}
