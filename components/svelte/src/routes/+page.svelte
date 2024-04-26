@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Upload from '../components/upload.svelte';
+	import Upload from '../lib/upload.svelte.js';
 
 	let Open: Boolean = true;
 </script>
