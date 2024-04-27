@@ -13,20 +13,26 @@
 	export let Open: Boolean = true;
 	export let Uploading: boolean = false;
 
-	// Event Dispatch
-	const dispatch = createEventDispatcher();
-
 	// File variables to make life easier
-	let files:
-		| {
-				name: string;
-				type: string;
-				size: string;
-				url: string;
-				uploaded: boolean;
-		  }[]
-		| null = null;
+	interface FileTypings {
+		name: string;
+		type: string;
+		size: string;
+		url: string;
+		uploaded: boolean;
+	}
+
+	interface EventTypes {
+		upload_finished: FileTypings[] | null;
+		error: Error;
+		close: null;
+	}
+
+	let files: FileTypings[] | null = null;
 	let fileList: FileList;
+
+	// Event Dispatch
+	const dispatch = createEventDispatcher<EventTypes>();
 
 	// Global max file size restriction error
 	if (MaxFileSize > 100)

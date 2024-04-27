@@ -1,4 +1,19 @@
 import { SvelteComponentTyped } from 'svelte';
+
+interface FileTypings {
+	name: string;
+	type: string;
+	size: string;
+	url: string;
+	uploaded: boolean;
+}
+
+interface EventTypes {
+	upload_finished: FileTypings[] | null;
+	error: Error;
+	close: null;
+}
+
 declare const __propDef: {
 	props: {
 		AllowedFileTypes: string[];
@@ -9,12 +24,8 @@ declare const __propDef: {
 		Open?: Boolean | undefined;
 		Uploading?: boolean | undefined;
 	};
-	events: {
-		close: CustomEvent<any>;
-		upload_finished: CustomEvent<any>;
-		error: CustomEvent<any>;
-	} & {
-		[evt: string]: CustomEvent<any>;
+	events: EventTypes & {
+		[evt: string]: EventTypes<any>;
 	};
 	slots: {};
 };
