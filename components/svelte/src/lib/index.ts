@@ -1,3 +1,2 @@
 // Reexport your entry components here
-import Upload from './upload.svelte';
-export { Upload };
+export { default as default } from './upload.svelte';
