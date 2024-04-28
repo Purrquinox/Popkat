@@ -21,6 +21,8 @@ declare const __propDef: {
 		MultipleFilesAllowed: boolean;
 		API_URL: string;
 		Logo: string;
+        UserID: string;
+        Platform: string;
 		Open?: Boolean | undefined;
 		Uploading?: boolean | undefined;
 	};

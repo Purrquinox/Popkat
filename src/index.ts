@@ -8,6 +8,7 @@ import * as bodyParser from "body-parser";
 import * as compression from "compression";
 import multer from "multer";
 import multerS3 from "multer-s3";
+import { Metadata } from "./database/index";
 import { S3, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import * as crypto from "crypto";
@@ -75,20 +76,13 @@ const storage = multer({
 			cb(null, fileName);
 		},
 	}),
-	limits: { fileSize: 1024 * 1024 * 50 }, // 50MB
+	limits: { fileSize: 1024 * 1024 * 50 }, // 100MB (CF MAX)
 	fileFilter: (
 		req: express.Request,
 		file: Express.Multer.File,
 		cb: multer.FileFilterCallback
 	) => {
-		const filetypes = /jpeg|jpg|png/;
-		const extname = filetypes.test(
-			path.extname(file.originalname).toLowerCase()
-		);
-		const mimetype = filetypes.test(file.mimetype);
-
-		if (mimetype && extname) return cb(null, true);
-		else cb(new Error("Allow images only of extensions jpeg|jpg|png."));
+		return cb(null, true);
 	},
 });
 
@@ -110,10 +104,36 @@ app.get("/:file", async (req, res) => {
 	}
 });
 
-app.post("/upload", (req, res, next) => {
-	storage.single("file")(req, res, (err: any) => {
-		if (err) return res.status(500).send(err);
-		else return res.json({ key: req.file["key"] });
+app.get("/:file/meta", async (req, res) => {
+	const file = req.params["file"];
+
+	try {
+		const metadata = await Metadata.get({
+			key: file,
+		});
+
+		res.status(200).send(metadata);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post("/upload", async (req, res, next) => {
+	storage.single("file")(req, res, async (err: any) => {
+		try {
+			await Metadata.create({
+				key: req.file["key"],
+				userID: req.get("userID") || "unknown",
+				platform: req.get("platform") || "unknown",
+				fileType: req.file["mimetype"],
+				fileSize: req.file["size"],
+			});
+
+			if (err) return res.status(500).send(err);
+			else return res.status(200).json({ key: req.file["key"] });
+		} catch (error) {
+			res.status(500).send(error);
+		}
 	});
 });
 

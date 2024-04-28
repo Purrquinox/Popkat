@@ -10,6 +10,8 @@
 	export let MultipleFilesAllowed: boolean; // Allow multiple files to be uploaded
 	export let API_URL: string; // URL of the Upload API
 	export let Logo: string; // Logo URL
+    export let UserID: string; // User ID of Platform
+    export let Platform: string; // Platform ID
 	export let Open: Boolean = true;
 	export let Uploading: boolean = false;
 
@@ -58,6 +60,10 @@
 			// Create fetch request
 			await fetch(`${API_URL}/upload`, {
 				method: 'POST',
+                headers: {
+                    'userID': UserID,
+                    'platform': Platform
+                },
 				body: formData
 			})
 				.then(async (e) => {

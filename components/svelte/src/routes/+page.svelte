@@ -10,6 +10,8 @@
 	MultipleFilesAllowed={true}
 	API_URL="http://localhost:5600"
 	Logo="https://sparkyflight.xyz/logo.png"
+    UserID="0"
+    Platform="testservice"
 	{Open}
 	on:close={() => (Open = false)}
 />
