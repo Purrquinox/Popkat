@@ -1,9 +1,9 @@
 {
 	"name": "@purrquinox/popkat",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"description": "Hello, there. This is the Popkat CDN component for Sveltekit. This component simplifies uploading files to AWS S3 using our API, which can be easily self-hosted by following the instructions on our Github!",
 	"private": false,
-    "sideEffects": false,
+	"sideEffects": false,
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -14,9 +14,9 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"exports": {
-		".": {
-			"types": "./package/index.d.ts",
-			"svelte": "./package/index.js"
+		"./upload.svelte": {
+			"types": "./package/upload.svelte.d.ts",
+			"svelte": "./package/upload.svelte"
 		}
 	},
 	"files": [
