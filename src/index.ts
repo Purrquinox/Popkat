@@ -76,7 +76,7 @@ const storage = multer({
 			cb(null, fileName);
 		},
 	}),
-	limits: { fileSize: 1024 * 1024 * 50 }, // 100MB (CF MAX)
+	limits: { fileSize: 1024 * 1024 * 100 }, // 100MB (CF MAX)
 	fileFilter: (
 		req: express.Request,
 		file: Express.Multer.File,
