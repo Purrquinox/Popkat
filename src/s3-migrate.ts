@@ -122,11 +122,11 @@ const s3 = new S3({
 		let sqlScript: string = "";
 		sqlScript = changedURIs
 			.map((a) => {
-				return `UPDATE ${a.type}\n\tSET ${
+				return `UPDATE ${a.type}\nSET ${
 					a.type === "users" ? "avatar" : "image"
-				}="${a.newURI}"\n\tWHERE ${
+				} = '${a.newURI}'\nWHERE ${
 					a.type === "users" ? "avatar" : "image"
-				}="${a.oldURI}";`;
+				} = '${a.oldURI}';`;
 			})
 			.join("\n\n");
 
