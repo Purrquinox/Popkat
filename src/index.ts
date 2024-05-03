@@ -2,7 +2,7 @@
 import express, { Request, Response, json } from "express";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
-import { RedisClient } from "./cache/index";
+import { RedisClient, CacheManager } from "./cache/index";
 import * as cors from "cors";
 import * as bodyParser from "body-parser";
 import * as compression from "compression";
@@ -42,6 +42,10 @@ app.use(
 		store: new RedisStore({
 			sendCommand: (...args: string[]) => RedisClient.sendCommand(args),
 		}),
+		skip: (req) => {
+			if (req.url === "/upload") return false;
+			else return true;
+		},
 	})
 );
 
@@ -108,17 +112,27 @@ app.get("/:file/meta", async (req, res) => {
 	const file = req.params["file"];
 
 	try {
-		const metadata = await Metadata.get({
-			key: file,
-		});
+		const cache = await CacheManager.get(`${file}/meta`);
 
-		res.status(200).send(metadata);
+		if (cache) res.status(200).send(JSON.parse(cache));
+		else {
+			const metadata = await Metadata.get({
+				key: file,
+			});
+
+			await CacheManager.setEX(
+				`${file}/meta`,
+				4,
+				JSON.stringify(metadata)
+			);
+			res.status(200).send(metadata);
+		}
 	} catch (error) {
 		res.status(500).send(error);
 	}
 });
 
-app.post("/upload", async (req, res, next) => {
+app.post("/upload", async (req, res) => {
 	storage.single("file")(req, res, async (err: any) => {
 		try {
 			await Metadata.create({

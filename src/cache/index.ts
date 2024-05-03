@@ -40,6 +40,26 @@ class CacheManager {
 	}
 
 	/**
+	 * Set a value in the cache (with expiration)
+	 * @param key the key of the value to set
+	 * @param hours the amount of hours, this cached key should last
+	 * @param value the value to set
+	 */
+	static async setEX(
+		key: string,
+		hours: number,
+		value: any
+	): Promise<boolean> {
+		try {
+			await RedisClient.setEx(key, hours * 60 * 60, value);
+			return true;
+		} catch (error) {
+			console.error("Error setting cache:", error);
+			return false;
+		}
+	}
+
+	/**
 	 * Update a value in the cache
 	 * @param key the key of the value to update
 	 * @param value the new value to set
