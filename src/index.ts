@@ -16,15 +16,16 @@ import * as path from "path";
 import * as Logger from "./logger";
 import "dotenv/config";
 
-// Server
-const app = express();
+// Servers
+const publicServer = express();
+const admin = express();
 
-// Server Middleware
-app.use(cors.default());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(json());
-app.use(
+// Server Middleware (public)
+publicServer.use(cors.default());
+publicServer.use(bodyParser.urlencoded({ extended: true }));
+publicServer.use(bodyParser.json());
+publicServer.use(json());
+publicServer.use(
 	compression.default({
 		filter: (req: Request, res: Response) => {
 			if (req.headers["x-no-compression"]) return false;
@@ -33,7 +34,7 @@ app.use(
 		threshold: 0,
 	})
 );
-app.use(
+publicServer.use(
 	rateLimit({
 		windowMs: 1 * 60 * 1000,
 		limit: 20,
@@ -46,6 +47,21 @@ app.use(
 			if (req.url === "/upload") return false;
 			else return true;
 		},
+	})
+);
+
+// Server Middleware (admin)
+admin.use(cors.default());
+admin.use(bodyParser.urlencoded({ extended: true }));
+admin.use(bodyParser.json());
+admin.use(json());
+admin.use(
+	compression.default({
+		filter: (req: Request, res: Response) => {
+			if (req.headers["x-no-compression"]) return false;
+			return compression.filter(req, res);
+		},
+		threshold: 0,
 	})
 );
 
@@ -90,8 +106,8 @@ const storage = multer({
 	},
 });
 
-// Routes
-app.get("/:file", async (req, res) => {
+// Public Routes
+publicServer.get("/:file", async (req, res) => {
 	const file = req.params["file"];
 
 	try {
@@ -108,7 +124,7 @@ app.get("/:file", async (req, res) => {
 	}
 });
 
-app.get("/:file/meta", async (req, res) => {
+publicServer.get("/:file/meta", async (req, res) => {
 	const file = req.params["file"];
 
 	try {
@@ -132,7 +148,7 @@ app.get("/:file/meta", async (req, res) => {
 	}
 });
 
-app.post("/upload", async (req, res) => {
+publicServer.post("/upload", async (req, res) => {
 	storage.single("file")(req, res, async (err: any) => {
 		try {
 			await Metadata.create({
@@ -151,7 +167,66 @@ app.post("/upload", async (req, res) => {
 	});
 });
 
-// Expose Server
-app.listen(process.env.PORT, () =>
-	Logger.debug("Server", `Listening on http://localhost:${process.env.PORT}/`)
+// Admin Routes
+admin.delete("/delete", async (req, res) => {
+	const userID = req.get("userID"),
+		platform = req.get("platform"),
+		key = req.get("key");
+
+	if (!userID || !platform || !key)
+		return res.status(500).json({
+			message: "Missing fields in Header",
+		});
+
+	try {
+		const metadata = await Metadata.get({
+			key: key,
+		});
+
+		if (metadata) {
+			let success = await Metadata.delete({
+				key: key,
+			});
+
+			if (success) {
+				success = false;
+
+				await CacheManager.delete(`${key}/meta`);
+
+				await s3
+					.deleteObject({ Bucket: "popkat", Key: key })
+					.then(() => (success = true))
+					.catch((err) => {
+						throw new Error(err);
+					});
+
+				if (success) return res.status(200).json({ success: true });
+				else
+					throw new Error(
+						"Hmm, There was an unexpected error deleting this key"
+					);
+			} else
+				throw new Error(
+					"Hmm, There was an unexpected error deleting this key"
+				);
+		} else throw new Error("Hmm, that key could not be found.");
+	} catch (error) {
+		return res.status(500).send(error);
+	}
+});
+
+// Expose Server (public)
+publicServer.listen(process.env.PORT, () =>
+	Logger.debug(
+		"Server (public)",
+		`Listening on http://localhost:${process.env.PORT}/`
+	)
+);
+
+// Expose Server (admin)
+admin.listen(process.env.ADMIN_PORT, () =>
+	Logger.debug(
+		"Server (admin)",
+		`Listening on http://localhost:${process.env.ADMIN_PORT}/`
+	)
 );
