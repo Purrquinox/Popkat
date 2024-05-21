@@ -199,7 +199,6 @@ admin.delete("/delete", async (req, res) => {
 					});
 
 				if (success) {
-                    console.log(true);
                     return res.status(200).json({ success: true });
                 }
 				else
