@@ -169,13 +169,11 @@ publicServer.post("/upload", async (req, res) => {
 
 // Admin Routes
 admin.delete("/delete", async (req, res) => {
-	const userID = req.get("userID"),
-		platform = req.get("platform"),
-		key = req.get("key");
+	const key = req.get("key");
 
-	if (!userID || !platform || !key)
+	if (!key)
 		return res.status(500).json({
-			message: "Missing fields in Header",
+			message: "Missing key in Header",
 		});
 
 	try {
@@ -183,6 +181,8 @@ admin.delete("/delete", async (req, res) => {
 			key: key,
 		});
 
+        console.log(metadata);
+        
 		if (metadata) {
 			let success = await Metadata.delete({
 				key: key,
@@ -200,7 +200,10 @@ admin.delete("/delete", async (req, res) => {
 						throw new Error(err);
 					});
 
-				if (success) return res.status(200).json({ success: true });
+				if (success) {
+                    console.log(true);
+                    return res.status(200).json({ success: true });
+                }
 				else
 					throw new Error(
 						"Hmm, There was an unexpected error deleting this key"
@@ -211,6 +214,8 @@ admin.delete("/delete", async (req, res) => {
 				);
 		} else throw new Error("Hmm, that key could not be found.");
 	} catch (error) {
+        console.log(error);
+
 		return res.status(500).send(error);
 	}
 });
