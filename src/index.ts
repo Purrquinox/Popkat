@@ -176,14 +176,10 @@ admin.delete("/delete", async (req, res) => {
 			message: "Missing key in Header",
 		});
 
-    console.log(key);
-    
 	try {
 		const metadata = await Metadata.get({
 			key: key,
 		});
-
-        console.log(metadata);
         
 		if (metadata) {
 			let success = await Metadata.delete({
@@ -216,8 +212,6 @@ admin.delete("/delete", async (req, res) => {
 				);
 		} else throw new Error("Hmm, that key could not be found.");
 	} catch (error) {
-        console.log(error);
-
 		return res.status(500).send(error);
 	}
 });
