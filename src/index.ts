@@ -176,6 +176,8 @@ admin.delete("/delete", async (req, res) => {
 			message: "Missing key in Header",
 		});
 
+    console.log(key);
+    
 	try {
 		const metadata = await Metadata.get({
 			key: key,
