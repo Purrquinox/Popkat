@@ -24,9 +24,9 @@ publicServer.register(FastifyCompress, { threshold: 0 });
 publicServer.register(FastifyRateLimit, {
   max: 20,
   timeWindow: "1 minute",
-  redis: RedisClient,
   keyGenerator: (req) => req.ip,
   allowList: ["/upload"],
+  url: process.env.REDIS_URI
 });
 publicServer.register(FastifyMultipart);
 
