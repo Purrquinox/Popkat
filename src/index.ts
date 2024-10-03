@@ -121,7 +121,7 @@ admin.delete("/delete", async (req, reply) => {
   const key = req.headers["key"] as string;
 
   if (!key) {
-    return reply.status(500).json({
+    return reply.status(500).send({
       message: "Missing key in Header",
     });
   }
@@ -145,7 +145,7 @@ admin.delete("/delete", async (req, reply) => {
           });
 
         if (success) {
-          return reply.status(200).json({ success: true });
+          return reply.status(200).send({ success: true });
         } else {
           throw new Error("Unexpected error deleting the key");
         }
@@ -163,7 +163,7 @@ admin.delete("/delete", async (req, reply) => {
 // Expose Server (public)
 publicServer.listen({ port: parseInt(process.env.PORT) }, (err, address) => {
   if (err) {
-    Logger.error("Server (public)", err);
+    Logger.error("Server (public)", err.toString());
     process.exit(1);
   }
   Logger.debug("Server (public)", `Listening on ${address}`);
@@ -172,7 +172,7 @@ publicServer.listen({ port: parseInt(process.env.PORT) }, (err, address) => {
 // Expose Server (admin)
 admin.listen({ port: parseInt(process.env.ADMIN_PORT) }, (err, address) => {
   if (err) {
-    Logger.error("Server (admin)", err);
+    Logger.error("Server (admin)", err.toString());
     process.exit(1);
   }
   Logger.debug("Server (admin)", `Listening on ${address}`);
