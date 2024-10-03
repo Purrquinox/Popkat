@@ -4,7 +4,7 @@
 	"description": "Amazon S3 Upload Widget for Purrquinox",
 	"main": "index.js",
 	"scripts": {
-		"start": "bun run ./dist/index",
+		"start": "node ./dist/index",
 		"tsc": "tsc",
 		"format": "prettier --write ."
 	},
@@ -14,10 +14,11 @@
 		"colors": "^1.4.0",
 		"compression": "^1.7.4",
 		"dotenv": "^16.0.3",
+		"fastify": "^5.0.0",
 		"@fastify/redis": "^9.0.0",
 		"@fastify/rate-limit": "^8.0.0",
 		"@fastify/multipart": "^7.6.0",
-		"@fastify/cors": "^8.0.0",
+		"@fastify/cors": "^8.5.0",
 		"@fastify/compress": "^7.0.0",
 		"prettier": "^2.7.1",
 		"redis": "^4.6.13"
