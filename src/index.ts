@@ -63,10 +63,10 @@ publicServer.get("/:file", async (req, res) => {
             res.status(500).send("Error streaming file");
         });
 
-        readStream.pipe(res); // Piping stream to response
+        await readStream.pipe(res); // Piping stream to response
     } catch (error) {
         // Make sure the error is sent only if the stream hasn't started
-        if (!res.headersSent) {
+        if (!res.sent) {
             res.status(500).send("Error fetching file");
         }
     }
