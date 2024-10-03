@@ -28,7 +28,6 @@ publicServer.register(FastifyRateLimit, {
   keyGenerator: (req) => req.ip,
   allowList: ["/upload"],
 });
-publicServer.register(FastifyRedis, { client: RedisClient });
 publicServer.register(FastifyMultipart);
 
 // Server Middleware (admin)
