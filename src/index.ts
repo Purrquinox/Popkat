@@ -1,5 +1,6 @@
 // Packages
 import Fastify from "fastify";
+import Redis from "ioredis";
 import FastifyRateLimit from "@fastify/rate-limit";
 import FastifyRedis from "@fastify/redis";
 import FastifyMultipart from "@fastify/multipart";
@@ -26,7 +27,7 @@ publicServer.register(FastifyRateLimit, {
   timeWindow: "1 minute",
   keyGenerator: (req) => req.ip,
   allowList: ["/upload"],
-  url: process.env.REDIS_URI
+  redis: new Redis({ url: process.env.REDIS_URI })
 });
 publicServer.register(FastifyMultipart);
 
