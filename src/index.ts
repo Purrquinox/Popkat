@@ -58,7 +58,7 @@ publicServer.get("/:file", async (req, res) => {
       
         const item = await s3.send(command);
         const readStream = item.Body as Readable;
-        res.setHeader("Content-Type", item.ContentType || "application/octet-stream");
+        res.header("Content-Type", item.ContentType || "application/octet-stream");
 
         // Pipe the readStream and end the response when done
         readStream.pipe(res).on('finish', () => {
