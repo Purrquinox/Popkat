@@ -55,15 +55,20 @@ publicServer.get("/:file", async (req, res) => {
             Bucket: "popkat",
             Key: file,
         });
-      
+
         const item = await s3.send(command);
         const readStream = item.Body as Readable;
+
+        // Set content type based on the fetched file
         res.header("Content-Type", item.ContentType || "application/octet-stream");
 
-        // Pipe the readStream and end the response when done
-        readStream.pipe(await res).on('finish', () => {
-            res.end();
+        // Stream the file asynchronously using a Promise
+        await new Promise<void>((resolve, reject) => {
+            readStream.pipe(res);
+            readStream.on('end', resolve);
+            readStream.on('error', reject);
         });
+
     } catch (error) {
         if (!res.sent) {
             res.status(500).send("Error fetching file");
