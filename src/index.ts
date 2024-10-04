@@ -55,17 +55,16 @@ publicServer.get("/:file", async (req, res) => {
             Bucket: "popkat",
             Key: file,
         });
+      
         const item = await s3.send(command);
         const readStream = item.Body as Readable;
+        res.setHeader("Content-Type", item.ContentType || "application/octet-stream");
 
-        // Handle stream errors
-        readStream.on('error', (err) => {
-            res.status(500).send("Error streaming file");
+        // Pipe the readStream and end the response when done
+        readStream.pipe(res).on('finish', () => {
+            res.end();
         });
-
-        readStream.pipe(await res); // Piping stream to response
     } catch (error) {
-        // Make sure the error is sent only if the stream hasn't started
         if (!res.sent) {
             res.status(500).send("Error fetching file");
         }
