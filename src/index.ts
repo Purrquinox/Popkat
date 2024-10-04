@@ -61,7 +61,7 @@ publicServer.get("/:file", async (req, res) => {
         res.header("Content-Type", item.ContentType || "application/octet-stream");
 
         // Pipe the readStream and end the response when done
-        readStream.pipe(res).on('finish', () => {
+        readStream.pipe(await res).on('finish', () => {
             res.end();
         });
     } catch (error) {
