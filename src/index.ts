@@ -60,7 +60,7 @@ publicServer.get("/:file", async (req, res) => {
         const readStream = item.Body as Readable;
 
         // Set content type based on the fetched file
-        res.raw.header("Content-Type", item.ContentType || "application/octet-stream");
+        res.raw.setHeader("Content-Type", item.ContentType || "application/octet-stream");
 
         // Pipe the stream into res.raw (which is the actual ServerResponse)
         await new Promise<void>((resolve, reject) => {
@@ -73,7 +73,7 @@ publicServer.get("/:file", async (req, res) => {
         res.send();
 
     } catch (error) {
-        if (!res.raw.sent) {
+        if (!res.raw.headersSent) {
             res.status(500).send("Error fetching file");
         }
     }
